@@ -34,7 +34,7 @@ func CreateSimulation(cities []*City, alienCount int, randomizer Random) Simulat
 	world := CreateWorld(cities)
 	aliens := createAliens(world, alienCount, randomizer)
 	simulation := Simulation{&world, aliens, 0, randomizer}
-	log.Printf("Created %s\n", simulation)
+	debugLog(fmt.Sprintf("Created %s\n", simulation))
 	return simulation
 }
 
@@ -43,7 +43,7 @@ func SimulationFromPath(path string, alienCount int, randomizer Random) Simulati
 	world := WorldFromPath(path)
 	aliens := createAliens(world, alienCount, randomizer)
 	simulation := Simulation{&world, aliens, 0, randomizer}
-	log.Printf("Created %s\n", simulation)
+	debugLog(fmt.Sprintf("Created %s\n", simulation))
 	return simulation
 }
 
@@ -74,18 +74,19 @@ func (simulation *Simulation) RemoveAlien(alien *Alien) {
 func (simulation *Simulation) ResolveConflicts() {
 
 	// Group aliens by city
-	presenceMap := make(map[*City][]*Alien)
+	presenceMap := make(map[string][]*Alien)
 	for _, alien := range simulation.Aliens {
-		presenceMap[alien.City] = append(presenceMap[alien.City], alien)
+		presenceMap[alien.City.Name] = append(presenceMap[alien.City.Name], alien)
 	}
 
 	// Destory cities that have multiple aliens
-	for city, aliens := range presenceMap {
+	for cityName, aliens := range presenceMap {
 		if len(aliens) <= 1 {
 			continue
 		}
-		log.Printf("Whoa! Multiple aliens in %s: %s.", city, aliens)
-		simulation.World.RemoveCity(city)
+
+		log.Printf("Whoa! Multiple aliens in %s: %s.", cityName, aliens)
+		simulation.World.RemoveCityByName(cityName)
 		for _, alien := range aliens {
 			simulation.RemoveAlien(alien)
 			log.Printf("%s was killed.", alien)

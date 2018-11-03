@@ -8,16 +8,14 @@ An exercise in Go to simulate a mad alien invasion.
 
 ## Todo
 Alien Invasion is work in progress. Notable items missing:
-1. Map file reader
-2. Command parser
-3. Alien names
-4. Graph visualization?
+1. Alien names
+2. Graph visualization?
 
 ## Installation and usage
 Create a map file and run the simulation:
 ```
 go install
-./bin/invade MAPFILE [-n ALIENS]
+./bin/invasion [-n ALIENS] MAPFILE
 ```
 
 ## Rules

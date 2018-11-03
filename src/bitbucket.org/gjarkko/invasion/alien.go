@@ -19,14 +19,14 @@ func (alien Alien) String() string {
 // Creates a named Alien
 func CreateAlien(name string) Alien {
 	alien := Alien{name, nil}
-	log.Printf("Alien %s created.", alien)
+	debugLog(fmt.Sprintf("Alien %s created.", alien))
 	return alien
 }
 
 // Creates a named Alien
 func CreateAlienInCity(name string, city *City) Alien {
 	alien := Alien{name, city}
-	log.Printf("Alien %s created.", alien)
+	debugLog(fmt.Sprintf("Alien %s created.", alien))
 	return alien
 }
 
@@ -36,7 +36,7 @@ func (alien *Alien) MoveToCity(city *City) {
 		log.Panicf("Panic: Invalid move for alien %s; already in %s.", alien, city)
 	}
 	alien.City = city
-	log.Printf("Alien %s moved to %s.", alien, city)
+	debugLog(fmt.Sprintf("Alien %s moved to %s.", alien, city))
 }
 
 // Moves the given alien to a random available direction
@@ -44,12 +44,14 @@ func (alien *Alien) MoveToRandomDirection(randomizer Random) {
 
 	// Find directions that have a neighbor
 	available := []string{}
-	for direction, _ := range alien.City.Neighbors {
-		available = append(available, direction)
+	for direction, city := range alien.City.Neighbors {
+		if city != nil {
+			available = append(available, direction)
+		}
 	}
 
 	if len(available) == 0 {
-		log.Printf("Alien %s is stuck.", alien)
+		debugLog(fmt.Sprintf("Alien %s is stuck.", alien))
 		return
 	} else {
 

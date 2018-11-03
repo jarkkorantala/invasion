@@ -59,6 +59,28 @@ func TestRemoveCityPanicsOnNonExistent(test *testing.T) {
 	world.RemoveCity(&vienna)
 }
 
+func TestRemoveCityByName(test *testing.T) {
+	world := World{}
+	moscow := CreateCity("Moscow")
+	vienna := CreateCity("Vienna")
+	world.AddCity(&moscow)
+	world.AddCity(&vienna)
+	world.RemoveCityByName("Moscow")
+	expected := "World with 1 cities: [Vienna]"
+	assertStringEqual(test, expected, world.String())
+	world.RemoveCityByName("Vienna")
+	expected = "World with 0 cities: []"
+	assertStringEqual(test, expected, world.String())
+}
+
+func TestRemoveCityByNamePanicsOnNonExistent(test *testing.T) {
+	defer assertPanics(test)
+	world := World{}
+	moscow := CreateCity("Moscow")
+	world.AddCity(&moscow)
+	world.RemoveCityByName("Vienna")
+}
+
 func TestRandomCity(test *testing.T) {
 	moscow := CreateCity("Moscow")
 	vienna := CreateCity("Vienna")

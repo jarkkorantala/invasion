@@ -40,7 +40,7 @@ func CreateCity(name string) City {
 	}
 	neighbors := make(map[string]*City)
 	city := City{name, neighbors}
-	log.Printf("City %s was created.", city)
+	debugLog(fmt.Sprintf("City %s was created.", city))
 	return city
 }
 
@@ -69,7 +69,7 @@ func (city City) SetNeighbor(direction string, neighbor *City) {
 	}
 	city.Neighbors[direction] = neighbor
 	neighbor.Neighbors[opposite] = &city
-	log.Printf("City %s has a road to neighbour %s to the %s.", city, neighbor, direction)
+	debugLog(fmt.Sprintf("City %s has a road to neighbour %s to the %s.", city, neighbor, direction))
 }
 
 // Gets a neighbor for a given direction
@@ -86,9 +86,12 @@ func (city City) GetNeighbor(direction string) *City {
 // Marks a city destroyed, removing it from neighbors
 func (city City) Destroy() {
 	for direction, neighbor := range city.Neighbors {
+		if neighbor == nil {
+			continue
+		}
 		opposite := opposites[direction]
 		neighbor.Neighbors[opposite] = nil
-		log.Printf("City %s is no longer a neighbor of %s in %s.\n", city, neighbor, opposite)
+		debugLog(fmt.Sprintf("City %s is no longer a neighbor of %s in %s.\n", city, neighbor, opposite))
 	}
 	log.Printf("City %s was destroyed.\n", city)
 }

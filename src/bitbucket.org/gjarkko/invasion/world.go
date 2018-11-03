@@ -53,10 +53,23 @@ func (world *World) RemoveCity(city *City) {
 	for i, candidate := range world.Cities {
 		if reflect.DeepEqual(city, candidate) {
 			world.Cities = world.Cities[:i+copy(world.Cities[i:], world.Cities[i+1:])]
+			city.Destroy()
 			return
 		}
 	}
 	log.Panicf("Panic: Invalid city to delete - %s doesn't exist in the world", city)
+}
+
+// Remove (destroy) a City from the World by it's name
+func (world *World) RemoveCityByName(cityName string) {
+	for i, city := range world.Cities {
+		if city.Name == cityName {
+			world.Cities = world.Cities[:i+copy(world.Cities[i:], world.Cities[i+1:])]
+			city.Destroy()
+			return
+		}
+	}
+	log.Panicf("Panic: Invalid city to delete - %s doesn't exist in the world", cityName)
 }
 
 // Pick a City in the given world at random
