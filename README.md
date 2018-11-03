@@ -10,8 +10,9 @@ An exercise in Go to simulate a mad alien invasion.
 ## Installation and usage
 Create a map file and run the simulation:
 ```
-go install
-./bin/invasion [-n ALIENS] MAPFILE
+$ go get github.com/jarkkorantala/invasion/simulation
+$ go install github.com/jarkkorantala/invasion/simulation
+$ simulation [-n ALIENS] MAPFILE
 ```
 
 ## Rules
