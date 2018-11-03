@@ -6,10 +6,6 @@ An exercise in Go to simulate a mad alien invasion.
 > ---  *Cats*
 
 
-## Todo
-Alien Invasion is work in progress. Notable items missing:
-1. Alien names
-2. Graph visualization?
 
 ## Installation and usage
 Create a map file and run the simulation:
@@ -21,7 +17,7 @@ go install
 ## Rules
 1. Aliens start out at random cities.
 2. Aliens wander around randomly following roads between cities. Each iteration, aliens can travel in any of the roads leading out of a city.
-3. When two aliens end up in teh same place they fight, killing each other and destroying the city and any roads in and out of it.
+3. When two aliens end up in the same place they fight, killing each other, destroying the city and any roads in and out of it.
 4. Simulation ends once one of the conditions has been reached:  
     1. No more aliens in the simulation
     2. Each alien has reached 10,000 moves
