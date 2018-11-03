@@ -1,0 +1,5 @@
+Atlantic City north=Philadelphia
+Baltimore east=Philadelphia
+New York west=Philadelphia
+Philadelphia east=New York north=Scranton south=Atlantic City west=Baltimore
+Scranton south=Philadelphia

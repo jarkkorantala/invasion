@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"reflect"
 	"sort"
@@ -82,6 +83,7 @@ func (world World) Serialize() string {
 
 // Deserialize world from strings
 func WorldFromString(serialized string) World {
+	serialized = strings.Replace(serialized, "\r\n", "\n", -1)
 	cityStrings := strings.Split(serialized, "\n")
 	cityMap := map[string]*City{}
 	neighborMap := map[*City]map[string]string{}
@@ -110,4 +112,13 @@ func WorldFromString(serialized string) World {
 		cities = append(cities, city)
 	}
 	return CreateWorld(cities)
+}
+
+// Read World from a file
+func WorldFromPath(path string) World {
+	dat, err := ioutil.ReadFile(path)
+	check(err)
+	serialized := string(dat)
+	world := WorldFromString(serialized)
+	return world
 }

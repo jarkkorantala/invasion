@@ -21,6 +21,15 @@ func TestCreateSimulation(test *testing.T) {
 	}
 }
 
+func TestSimulationFromPath(test *testing.T) {
+	simulation := SimulationFromPath("fixtures/test_world.dat", 12, NewMockRandomizer())
+	expected := "Simulation with World with 5 cities: [Atlantic City Baltimore New York Philadelphia Scranton] and 12 aliens"
+	assertStringEqual(test, expected, simulation.String())
+	for _, alien := range simulation.Aliens {
+		assertStringEqual(test, "Atlantic City", alien.City.String())
+	}
+}
+
 func TestRemoveAlien(test *testing.T) {
 	simulation := createMockSimulation(12)
 

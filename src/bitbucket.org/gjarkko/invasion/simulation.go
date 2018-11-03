@@ -17,10 +17,8 @@ func (simulation Simulation) String() string {
 	return fmt.Sprintf("Simulation with %s and %v aliens", simulation.World, len(simulation.Aliens))
 }
 
-// Creates a simulation for the given cities for the given number of aliens
-func CreateSimulation(cities []*City, alienCount int, randomizer Random) Simulation {
-	world := CreateWorld(cities)
-
+// Create a number of aliens for a world
+func createAliens(world World, alienCount int, randomizer Random) []*Alien {
 	var aliens []*Alien
 	for i := 0; i < alienCount; i++ {
 		alienName := MakeAlienName(i)
@@ -28,7 +26,22 @@ func CreateSimulation(cities []*City, alienCount int, randomizer Random) Simulat
 		alien := CreateAlienInCity(alienName, originCity)
 		aliens = append(aliens, &alien)
 	}
+	return aliens
+}
 
+// Creates a simulation for the given cities for the given number of aliens
+func CreateSimulation(cities []*City, alienCount int, randomizer Random) Simulation {
+	world := CreateWorld(cities)
+	aliens := createAliens(world, alienCount, randomizer)
+	simulation := Simulation{&world, aliens, 0, randomizer}
+	log.Printf("Created %s\n", simulation)
+	return simulation
+}
+
+// Creates simulation for the given map  path and for the given number of aliens
+func SimulationFromPath(path string, alienCount int, randomizer Random) Simulation {
+	world := WorldFromPath(path)
+	aliens := createAliens(world, alienCount, randomizer)
 	simulation := Simulation{&world, aliens, 0, randomizer}
 	log.Printf("Created %s\n", simulation)
 	return simulation

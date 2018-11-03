@@ -1,6 +1,7 @@
 package main
 
 import (
+	"path"
 	"reflect"
 	"testing"
 )
@@ -107,4 +108,24 @@ func TestWorldFromString(test *testing.T) {
 	if !reflect.DeepEqual(expected, actual) {
 		test.Errorf("expected: %+v, actual: %+v", expected, actual)
 	}
+}
+
+func TestWorldFromPath(test *testing.T) {
+	baltimore := CreateCity("Baltimore")
+	philadelphia := CreateCity("Philadelphia")
+	newYork := CreateCity("New York")
+	scranton := CreateCity("Scranton")
+	atlanticCity := CreateCity("Atlantic City")
+	baltimore.SetNeighbor(East, &philadelphia)
+	scranton.SetNeighbor(South, &philadelphia)
+	atlanticCity.SetNeighbor(North, &philadelphia)
+	newYork.SetNeighbor(West, &philadelphia)
+	expected := CreateWorld([]*City{&baltimore, &philadelphia, &newYork, &scranton, &atlanticCity})
+
+	fixturePath := path.Join("fixtures", "test_world.dat")
+	actual := WorldFromPath(fixturePath)
+	if !reflect.DeepEqual(expected, actual) {
+		test.Errorf("expected: %+v, actual: %+v", expected, actual)
+	}
+
 }
