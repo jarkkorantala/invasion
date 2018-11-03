@@ -3,6 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
+	"reflect"
+	"regexp"
+	"sort"
+	"strings"
 )
 
 const North = "north"
@@ -49,7 +53,7 @@ func (city City) SetNeighbor(direction string, neighbor *City) {
 
 	// Check for conflicts previously set
 	if old, ok := city.Neighbors[direction]; ok {
-		if old != neighbor {
+		if !reflect.DeepEqual(old, neighbor) {
 			log.Panicf(fmt.Sprintf("Panic: Invalid neighbor definition for %s: %s=%s. "+
 				"Already set to %s.", city, direction, neighbor, old))
 		}
@@ -58,7 +62,7 @@ func (city City) SetNeighbor(direction string, neighbor *City) {
 	// Check for conflicting setup on neighbor
 	opposite := opposites[direction]
 	if old, ok := neighbor.Neighbors[opposite]; ok {
-		if old != &city {
+		if !reflect.DeepEqual(old, &city) {
 			log.Panicf(fmt.Sprintf("Panic: Invalid neighbor definition for %s: %s=%s. Already set to %s.",
 				neighbor, opposite, city, old))
 		}
@@ -97,4 +101,59 @@ func isDirection(direction string) bool {
 		}
 	}
 	return false
+}
+
+// Serialize a City to string
+func (city City) Serialize() string {
+
+	serialized := city.Name
+
+	// Find directions that have a neighbor
+	available := []string{}
+	for direction, _ := range city.Neighbors {
+		available = append(available, direction)
+	}
+
+	// Ensure consistent ordering of directions for deterministic operation
+	sort.Strings(available)
+
+	for _, direction := range available {
+		serialized += fmt.Sprintf(" %s=%s", direction, city.Neighbors[direction])
+	}
+	return serialized
+}
+
+// Deserialize a City from string (without neighbors)
+func CityFromString(serialized string) City {
+
+	// Find positions of cardinal directories ("direction=")
+	re := regexp.MustCompile("( [\\w]+=)")
+	positions := re.FindAllStringIndex(serialized, -1)
+	cityName := serialized
+	if len(positions) > 0 {
+		cityName = serialized[0:positions[0][0]]
+	}
+	city := CreateCity(cityName)
+	return city
+}
+
+// Deserialize names of neighbors from string
+func CityNeighborNamesFromString(serialized string) map[string]string {
+
+	// Find positions of cardinal directories ("direction=")
+	re := regexp.MustCompile("( [\\w]+=)")
+	positions := re.FindAllStringIndex(serialized, -1)
+
+	// From parts separated by these positions, parse direction and city name
+	neighborNames := map[string]string{}
+	for i, indices := range positions {
+		start := indices[0] + 1
+		end := len(serialized)
+		if i+1 < len(positions) {
+			end = positions[i+1][0]
+		}
+		parts := strings.Split(serialized[start:end], "=")
+		neighborNames[parts[0]] = parts[1]
+	}
+	return neighborNames
 }

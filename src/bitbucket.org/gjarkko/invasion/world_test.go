@@ -1,6 +1,7 @@
 package main
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -66,4 +67,44 @@ func TestRandomCity(test *testing.T) {
 	assertStringerEqual(test, moscow, world.RandomCity(randomizer))
 	assertStringerEqual(test, moscow, world.RandomCity(randomizer))
 	assertStringerEqual(test, moscow, world.RandomCity(randomizer))
+}
+
+func TestSerializeWorld(test *testing.T) {
+	baltimore := CreateCity("Baltimore")
+	philadelphia := CreateCity("Philadelphia")
+	newYork := CreateCity("New York")
+	scranton := CreateCity("Scranton")
+	atlanticCity := CreateCity("Atlantic City")
+	baltimore.SetNeighbor(East, &philadelphia)
+	scranton.SetNeighbor(South, &philadelphia)
+	atlanticCity.SetNeighbor(North, &philadelphia)
+	newYork.SetNeighbor(West, &philadelphia)
+	world := CreateWorld([]*City{&baltimore, &philadelphia, &newYork, &scranton, &atlanticCity})
+	expected := "Atlantic City north=Philadelphia\n" +
+		"Baltimore east=Philadelphia\n" +
+		"New York west=Philadelphia\n" +
+		"Philadelphia east=New York north=Scranton south=Atlantic City west=Baltimore\n" +
+		"Scranton south=Philadelphia\n"
+	assertStringEqual(test, expected, world.Serialize())
+}
+
+func TestWorldFromString(test *testing.T) {
+	baltimore := CreateCity("Baltimore")
+	philadelphia := CreateCity("Philadelphia")
+	newYork := CreateCity("New York")
+	scranton := CreateCity("Scranton")
+	atlanticCity := CreateCity("Atlantic City")
+	baltimore.SetNeighbor(East, &philadelphia)
+	scranton.SetNeighbor(South, &philadelphia)
+	atlanticCity.SetNeighbor(North, &philadelphia)
+	newYork.SetNeighbor(West, &philadelphia)
+	expected := CreateWorld([]*City{&baltimore, &philadelphia, &newYork, &scranton, &atlanticCity})
+	actual := WorldFromString("Atlantic City north=Philadelphia\n" +
+		"Baltimore east=Philadelphia\n" +
+		"New York west=Philadelphia\n" +
+		"Philadelphia east=New York north=Scranton south=Atlantic City west=Baltimore\n" +
+		"Scranton south=Philadelphia\n")
+	if !reflect.DeepEqual(expected, actual) {
+		test.Errorf("expected: %+v, actual: %+v", expected, actual)
+	}
 }

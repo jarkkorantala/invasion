@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"sort"
+	"strings"
 )
 
 type World struct {
@@ -19,8 +21,18 @@ func (world World) String() string {
 // This is safer than calling the constructor directly as this checks for duplicate cities.
 func CreateWorld(cities []*City) World {
 	world := World{}
+
+	// Sort cities for determinism
+	cityMap := map[string]*City{}
+	cityNames := []string{}
 	for _, city := range cities {
-		world.AddCity(city)
+		cityMap[city.Name] = city
+		cityNames = append(cityNames, city.Name)
+	}
+	sort.Strings(cityNames)
+
+	for _, cityName := range cityNames {
+		world.AddCity(cityMap[cityName])
 	}
 	return world
 }
@@ -49,4 +61,53 @@ func (world *World) RemoveCity(city *City) {
 // Pick a City in the given world at random
 func (world World) RandomCity(randomizer Random) *City {
 	return world.Cities[randomizer.Intn(len(world.Cities))]
+}
+
+// Serialize a World to string
+func (world World) Serialize() string {
+	cityStrings := []string{}
+	for _, city := range world.Cities {
+		cityStrings = append(cityStrings, city.Serialize())
+	}
+
+	// Ensure consistent ordering of cities for deterministic operation
+	sort.Strings(cityStrings)
+	serialized := ""
+	for _, cityString := range cityStrings {
+		serialized += fmt.Sprintf("%s\n", cityString)
+	}
+	return serialized
+
+}
+
+// Deserialize world from strings
+func WorldFromString(serialized string) World {
+	cityStrings := strings.Split(serialized, "\n")
+	cityMap := map[string]*City{}
+	neighborMap := map[*City]map[string]string{}
+
+	// Parse serialized city strings, creating maps of cities and neighbour relationships
+	for _, cityString := range cityStrings {
+
+		// Ignore empty lines
+		if cityString == "" {
+			continue
+		}
+
+		city := CityFromString(cityString)
+		cityMap[city.Name] = &city
+		neighborMap[&city] = CityNeighborNamesFromString(cityString)
+	}
+
+	// Apply neighbor relationships
+	for city, neighborNames := range neighborMap {
+		for direction, neighborName := range neighborNames {
+			city.SetNeighbor(direction, cityMap[neighborName])
+		}
+	}
+	cities := []*City{}
+	for _, city := range cityMap {
+		cities = append(cities, city)
+	}
+	return CreateWorld(cities)
 }
