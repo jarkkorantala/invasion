@@ -7,6 +7,13 @@ import (
 	"time"
 )
 
+// Fail "test" if int "actual" doesn't equal to "expected"
+func assertIntEqual(test *testing.T, expected int, actual int) {
+	if expected != actual {
+		test.Errorf("expected: %+v, actual: %+v", expected, actual)
+	}
+}
+
 // Fail "test" if string "actual" doesn't equal to "expected"
 func assertStringEqual(test *testing.T, expected string, actual string) {
 	if expected != actual {
@@ -39,9 +46,9 @@ func NewMockRandomizer() MockRandomizer {
 	return MockRandomizer{}
 }
 
-// Return 1 instead of a random integer
+// Return 0 instead of a random integer
 func (randomizer MockRandomizer) Intn(max int) int {
-	return 1
+	return 0
 }
 
 // Init random by pseudorandom seed (current time)

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"reflect"
 )
 
 type World struct {
@@ -37,7 +38,7 @@ func (world *World) AddCity(city *City) {
 // Remove (destroy) a City from the World
 func (world *World) RemoveCity(city *City) {
 	for i, candidate := range world.Cities {
-		if city == candidate {
+		if reflect.DeepEqual(city, candidate) {
 			world.Cities = world.Cities[:i+copy(world.Cities[i:], world.Cities[i+1:])]
 			return
 		}

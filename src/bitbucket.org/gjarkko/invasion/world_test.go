@@ -63,7 +63,7 @@ func TestRandomCity(test *testing.T) {
 	world := CreateWorld([]*City{&moscow, &vienna})
 
 	randomizer := NewMockRandomizer()
-	assertStringerEqual(test, vienna, world.RandomCity(randomizer))
-	assertStringerEqual(test, vienna, world.RandomCity(randomizer))
-	assertStringerEqual(test, vienna, world.RandomCity(randomizer))
+	assertStringerEqual(test, moscow, world.RandomCity(randomizer))
+	assertStringerEqual(test, moscow, world.RandomCity(randomizer))
+	assertStringerEqual(test, moscow, world.RandomCity(randomizer))
 }

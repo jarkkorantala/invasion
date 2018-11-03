@@ -13,7 +13,7 @@ type Alien struct {
 
 // Formats an Alien as string
 func (alien Alien) String() string {
-	return fmt.Sprintf("Alien %s (in %v)", alien.Name, alien.City)
+	return fmt.Sprintf("%s", alien.Name)
 }
 
 // Creates a named Alien
@@ -56,7 +56,8 @@ func (alien *Alien) MoveToRandomDirection(randomizer Random) {
 		// Ensure consistent ordering of directions for deterministic operation
 		sort.Strings(available)
 
-		target := alien.City.Neighbors[available[randomizer.Intn(len(available))]]
+		direction := available[randomizer.Intn(len(available))]
+		target := alien.City.Neighbors[direction]
 		alien.MoveToCity(target)
 	}
 }

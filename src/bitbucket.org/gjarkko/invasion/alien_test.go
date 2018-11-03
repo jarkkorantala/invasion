@@ -47,11 +47,11 @@ func TestMoveToRandomDirection(test *testing.T) {
 	randomizer := NewMockRandomizer()
 	alf := CreateAlienInCity("Alf", &sanFernando)
 	alf.MoveToRandomDirection(randomizer)
-	assertStringerEqual(test, burbank, alf.City)
+	assertStringerEqual(test, calabasas, alf.City)
 	alf.MoveToRandomDirection(randomizer)
 	assertStringerEqual(test, glendale, alf.City)
 	alf.MoveToRandomDirection(randomizer)
-	assertStringerEqual(test, calabasas, alf.City)
+	assertStringerEqual(test, burbank, alf.City)
 }
 
 func TestMoveToRandomDirectionWhenStuck(test *testing.T) {
