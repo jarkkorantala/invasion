@@ -43,7 +43,7 @@ Define a map with 4 cities:
 Foo north=Bar west=Baz south=Qu-ux
 Bar south=Foo west=Bee
 ```    
-![Map](doc/map_rendered.png)
+![Map](doc/map_rendered.svg)
 
 ## Open questions and assumptions
 
