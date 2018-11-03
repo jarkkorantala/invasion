@@ -1,8 +1,17 @@
 # Alien Invasion!
 An exercise in Go to simulate a mad alien invasion.
+
 > All your base are belong to us.
 > 
-> --- <cite>Cats</cite>
+> ---  *Cats*
+
+
+## Todo
+Alien Invasion is work in progress. Notable items missing:
+1. Map file reader
+2. Command parser
+3. Alien names
+4. Graph visualization?
 
 ## Installation and usage
 Create a map file and run the simulation:
@@ -38,19 +47,21 @@ Bar south=Foo west=Bee
 
 ## Open questions and assumptions
 
-> No routes by implication
+### 1. No routes by implication
 
 If cities are defined neighbours by implication only (i.e. defined as neighbours by their neighbours but not directly by themselves), there is no route between them.  
-  
-    Example: Helsinki has no route to Tallinn despite being direct neighbours by implication.
-    ```
-    Helsinki east=Vyborg
-    Vyborg south=St.Petersburg west=Helsinki
-    St.Petersburg north=Vyborg east=Tallinn
-    Tallinn east=St.Petersburg
-    ```
 
 
-> Fights happend at end of turn.  
+Example: Helsinki has no route to Tallinn despite being direct neighbours by implication.  
+
+```
+Helsinki east=Vyborg
+Vyborg south=St.Petersburg west=Helsinki
+St.Petersburg north=Vyborg east=Tallinn
+Tallinn east=St.Petersburg
+```
+
+
+### 2. Fights happend at end of turn.  
 
 Example: If Puckmarin is currently in Tokyo and Adipose in Beijing, and Adipose starts the turn by moving to Beijing, the fight isn't immediately triggered as Puckmarin will move away on its own turn. Only if two aliens inhabit the same location after everyone has moved do fights occur.
