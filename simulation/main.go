@@ -29,8 +29,9 @@ func main() {
 	alienCount := 10
 	for i := 0; i < len(argsWithoutProg); i++ {
 		if argsWithoutProg[i] == "-n" {
-			i, err := strconv.Atoi((argsWithoutProg[i+1]))
+			alienCountInput, err := strconv.Atoi((argsWithoutProg[i+1]))
 			check(err)
+			alienCount = alienCountInput
 			i++
 			continue
 		} else {
