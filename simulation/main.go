@@ -21,7 +21,7 @@ func runSimulation(path string, alienCount int) {
 func main() {
 	argsWithoutProg := os.Args[1:]
 	if len(argsWithoutProg) < 1 {
-		fmt.Printf("Usage: %s [-n ALIENS] MAPFILE", os.Args[0])
+		fmt.Printf("Usage: %s [-n ALIENS] MAPFILE\n", os.Args[0])
 		return
 	}
 
@@ -38,7 +38,7 @@ func main() {
 			path = argsWithoutProg[i]
 		}
 	}
-	log.Printf("Starting simulation for map file %s with %d aliens.", path, alienCount)
+	log.Printf("Starting simulation for map file %s with %d aliens.\n", path, alienCount)
 	runSimulation(path, alienCount)
 
 }
