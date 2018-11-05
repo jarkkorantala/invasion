@@ -106,6 +106,17 @@ func isDirection(direction string) bool {
 	return false
 }
 
+// Return active (non-nil) neighbor cities
+func (city City) ActiveNeighbors() []*City {
+	active := []*City{}
+	for _, neighbor := range city.Neighbors {
+		if neighbor != nil {
+			active = append(active, neighbor)
+		}
+	}
+	return active
+}
+
 // Serialize a City to string
 func (city City) Serialize() string {
 

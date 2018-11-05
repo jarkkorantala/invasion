@@ -85,6 +85,30 @@ func TestDestroy(test *testing.T) {
 	assertNilCityReference(test, scranton.GetNeighbor(South))
 }
 
+func TestActiveNeighbors(test *testing.T) {
+	baltimore := CreateCity("Baltimore")
+	actual := len(baltimore.ActiveNeighbors())
+	if 0 != actual {
+		test.Errorf("expected: %+v, actual: %+v", 0, actual)
+	}
+
+	philadelphia := CreateCity("Philadelphia")
+	baltimore.SetNeighbor(East, &philadelphia)
+
+	actual = len(baltimore.ActiveNeighbors())
+	if 1 != actual {
+		test.Errorf("expected: %+v, actual: %+v", 1, actual)
+	}
+
+	// Add and remove a neighbor to cause a nil neighbor reference
+	philadelphia.Destroy()
+
+	actual = len(baltimore.ActiveNeighbors())
+	if 0 != actual {
+		test.Errorf("expected: %+v, actual: %+v", 0, actual)
+	}
+}
+
 func TestSerializeOrphanCity(test *testing.T) {
 	baltimore := CreateCity("Baltimore")
 

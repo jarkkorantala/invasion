@@ -103,11 +103,24 @@ func TestSerializeWorld(test *testing.T) {
 	atlanticCity.SetNeighbor(North, &philadelphia)
 	newYork.SetNeighbor(West, &philadelphia)
 	world := CreateWorld([]*City{&baltimore, &philadelphia, &newYork, &scranton, &atlanticCity})
-	expected := "Atlantic City north=Philadelphia\n" +
-		"Baltimore east=Philadelphia\n" +
-		"New York west=Philadelphia\n" +
-		"Philadelphia east=New York north=Scranton south=Atlantic City west=Baltimore\n" +
-		"Scranton south=Philadelphia\n"
+	expected := "Philadelphia east=New York north=Scranton south=Atlantic City west=Baltimore\n"
+	assertStringEqual(test, expected, world.Serialize())
+}
+
+func TestSerializeWorldOmittingRedundancies(test *testing.T) {
+	foo := CreateCity("Foo")
+	bar := CreateCity("Bar")
+	baz := CreateCity("Baz")
+	quux := CreateCity("Qu-ux")
+	bee := CreateCity("Bee")
+	foo.SetNeighbor(North, &bar)
+	foo.SetNeighbor(West, &baz)
+	foo.SetNeighbor(South, &quux)
+	bar.SetNeighbor(South, &foo)
+	bar.SetNeighbor(West, &bee)
+	world := CreateWorld([]*City{&foo, &bar, &baz, &quux, &bee})
+	expected := "Bee east=Bar\n" +
+		"Foo north=Bar south=Qu-ux west=Baz\n"
 	assertStringEqual(test, expected, world.Serialize())
 }
 
