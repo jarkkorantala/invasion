@@ -132,6 +132,25 @@ func TestWorldFromString(test *testing.T) {
 	}
 }
 
+func TestWorldFromStringWhenCitiesIntroducedAsNeighbors(test *testing.T) {
+	foo := CreateCity("Foo")
+	bar := CreateCity("Bar")
+	baz := CreateCity("Baz")
+	quux := CreateCity("Qu-ux")
+	bee := CreateCity("Bee")
+	foo.SetNeighbor(North, &bar)
+	foo.SetNeighbor(West, &baz)
+	foo.SetNeighbor(South, &quux)
+	bar.SetNeighbor(South, &foo)
+	bar.SetNeighbor(West, &bee)
+	expected := CreateWorld([]*City{&foo, &bar, &baz, &quux, &bee})
+	actual := WorldFromString("Foo north=Bar west=Baz south=Qu-ux\n" +
+		"Bar south=Foo west=Bee\n")
+	if !reflect.DeepEqual(expected, actual) {
+		test.Errorf("expected: %+v, actual: %+v", expected, actual)
+	}
+}
+
 func TestWorldFromPath(test *testing.T) {
 	baltimore := CreateCity("Baltimore")
 	philadelphia := CreateCity("Philadelphia")

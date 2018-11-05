@@ -114,6 +114,16 @@ func WorldFromString(serialized string) World {
 		neighborMap[&city] = CityNeighborNamesFromString(cityString)
 	}
 
+	// Ensure any cities introduced as neighbors are added
+	for _, neighbors := range neighborMap {
+		for _, cityName := range neighbors {
+			if _, ok := cityMap[cityName]; !ok {
+				city := CreateCity(cityName)
+				cityMap[city.Name] = &city
+			}
+		}
+	}
+
 	// Apply neighbor relationships
 	for city, neighborNames := range neighborMap {
 		for direction, neighborName := range neighborNames {
