@@ -77,16 +77,87 @@ func (world World) RandomCity(randomizer Random) *City {
 	return world.Cities[randomizer.Intn(len(world.Cities))]
 }
 
+// Return true if city and all its neighbors names are in the given list  of city names
+func cityAndRelationsSeen(seen map[string]bool, city *City, checked map[string]bool) bool {
+
+	if city == nil {
+		return true
+	}
+	// Detect loops - stop if city has already been checked for.
+	if len(checked) == 0 {
+		checked[city.Name] = true
+	} else {
+		if _, cityChecked := checked[city.Name]; cityChecked {
+			return true
+		}
+	}
+
+	if _, citySeen := seen[city.Name]; !citySeen {
+		return false
+	}
+
+	for _, neighbor := range city.ActiveNeighbors() {
+		checked[neighbor.Name] = true
+		if !cityAndRelationsSeen(seen, neighbor, checked) {
+			return false
+		}
+	}
+	return true
+}
+
+// Sort type to return cities sorted descending by neighbor count, ascending by name
+type byNeighborCount []*City
+
+func (cities byNeighborCount) Len() int {
+	return len(cities)
+}
+func (cities byNeighborCount) Swap(i, j int) {
+	cities[i], cities[j] = cities[j], cities[i]
+}
+func (cities byNeighborCount) Less(i, j int) bool {
+	log.Printf("Checking if %v < %v", cities[i], cities[j])
+	if cities[i] == nil || cities[j] == nil {
+		return false
+	}
+	iNeighbors := len(cities[i].ActiveNeighbors())
+	jNeighbors := len(cities[j].ActiveNeighbors())
+	if iNeighbors == jNeighbors {
+		return cities[i].Name < cities[j].Name
+	} else {
+		return iNeighbors > jNeighbors
+	}
+}
+
 // Serialize a World to string
 func (world World) Serialize() string {
+	seen := map[string]bool{}
 	cityStrings := []string{}
+
+	sortedByNeighborCount := []*City{}
 	for _, city := range world.Cities {
+		sortedByNeighborCount = append(sortedByNeighborCount, city)
+	}
+	sort.Sort(byNeighborCount(sortedByNeighborCount))
+
+	for _, city := range sortedByNeighborCount {
+
+		// If city and all its neighbors have already been seen, there's no need to serialize this city
+		if cityAndRelationsSeen(seen, city, map[string]bool{}) {
+			continue
+		}
+
+		// Mark city and neighbors seen
 		cityStrings = append(cityStrings, city.Serialize())
+		seen[city.Name] = true
+		for _, neighbor := range city.ActiveNeighbors() {
+			seen[neighbor.Name] = true
+		}
 	}
 
 	// Ensure consistent ordering of cities for deterministic operation
 	sort.Strings(cityStrings)
 	serialized := ""
+
 	for _, cityString := range cityStrings {
 		serialized += fmt.Sprintf("%s\n", cityString)
 	}
@@ -112,6 +183,16 @@ func WorldFromString(serialized string) World {
 		city := CityFromString(cityString)
 		cityMap[city.Name] = &city
 		neighborMap[&city] = CityNeighborNamesFromString(cityString)
+	}
+
+	// Ensure any cities introduced as neighbors are added
+	for _, neighbors := range neighborMap {
+		for _, cityName := range neighbors {
+			if _, ok := cityMap[cityName]; !ok {
+				city := CreateCity(cityName)
+				cityMap[city.Name] = &city
+			}
+		}
 	}
 
 	// Apply neighbor relationships

@@ -106,6 +106,17 @@ func isDirection(direction string) bool {
 	return false
 }
 
+// Return active (non-nil) neighbor cities
+func (city City) ActiveNeighbors() []*City {
+	active := []*City{}
+	for _, neighbor := range city.Neighbors {
+		if neighbor != nil {
+			active = append(active, neighbor)
+		}
+	}
+	return active
+}
+
 // Serialize a City to string
 func (city City) Serialize() string {
 
@@ -121,7 +132,11 @@ func (city City) Serialize() string {
 	sort.Strings(available)
 
 	for _, direction := range available {
-		serialized += fmt.Sprintf(" %s=%s", direction, city.Neighbors[direction])
+		neighbor := city.Neighbors[direction]
+		if neighbor == nil {
+			continue
+		}
+		serialized += fmt.Sprintf(" %s=%s", direction, neighbor)
 	}
 	return serialized
 }
