@@ -121,7 +121,11 @@ func (city City) Serialize() string {
 	sort.Strings(available)
 
 	for _, direction := range available {
-		serialized += fmt.Sprintf(" %s=%s", direction, city.Neighbors[direction])
+		neighbor := city.Neighbors[direction]
+		if neighbor == nil {
+			continue
+		}
+		serialized += fmt.Sprintf(" %s=%s", direction, neighbor)
 	}
 	return serialized
 }

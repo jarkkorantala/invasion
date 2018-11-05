@@ -87,6 +87,12 @@ func TestDestroy(test *testing.T) {
 
 func TestSerializeOrphanCity(test *testing.T) {
 	baltimore := CreateCity("Baltimore")
+
+	// Add and remove a neighbor to cause a nil neighbor reference
+	philadelphia := CreateCity("Philadelphia")
+	baltimore.SetNeighbor(East, &philadelphia)
+	philadelphia.Destroy()
+
 	assertStringEqual(test, "Baltimore", baltimore.Serialize())
 }
 
